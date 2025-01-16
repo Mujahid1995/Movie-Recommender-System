@@ -1,0 +1,36 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import pickle
+import requests
+
+def recommend(movie):
+    index = mov[mov['title'] == movie].index[0]
+    distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda x: x[1])
+    recommended_movie_names = []
+    for i in distances[1:6]:
+        # fetch the movie poster
+        movie_id = mov.iloc[i[0]].movie_id
+        recommended_movie_names.append(mov.iloc[i[0]].title)
+
+    return recommended_movie_names
+
+
+movies = pickle.load(open('movie_list.pkl','rb'))
+similarity = pickle.load(open('similarity.pkl','rb'))
+mov = pd.DataFrame(movies)
+st.header('Movie Recommender System')
+
+
+movie_list = movies['title'].values()
+selected_movie = st.selectbox("Type or select a movie from the dropdown",movie_list)
+
+if st.button('Show Recommendation'):
+    recommendations = recommend(selected_movie)
+    for i in recommendations:
+        st.write(i)
+
+
+
+
+
